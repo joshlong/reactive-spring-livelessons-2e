@@ -36,13 +36,12 @@ class Client {
   @EventListener(ApplicationReadyEvent.class)
   public void ready() {
     this.rSocketRequester
-        .route("greetings")
+        .route("greetings.10")
         .data(new GreetingRequest("Livelessons"))
         .retrieveFlux(GreetingResponse.class)
         .subscribe(log::info);
   }
 }
-
 
 @Data
 @AllArgsConstructor

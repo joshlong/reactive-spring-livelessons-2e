@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Flux;
@@ -25,11 +26,14 @@ public class RsocketServiceApplication {
 @Controller
 class GreetingService {
 
-  @MessageMapping("greetings")
-  Flux<GreetingResponse> greet(GreetingRequest request) {
+  @MessageMapping("greetings.{timeInSeconds}")
+  Flux<GreetingResponse> greet(GreetingRequest request, @DestinationVariable int timeInSeconds) {
+    if (timeInSeconds == 0 ) {
+      timeInSeconds = 1 ;
+    }
     return Flux
         .fromStream(Stream.generate(() -> new GreetingResponse("Hello " + request.getName() + " @ " + Instant.now() + "!")))
-        .delayElements(Duration.ofSeconds(1));
+        .delayElements(Duration.ofSeconds(timeInSeconds));
   }
 }
 
